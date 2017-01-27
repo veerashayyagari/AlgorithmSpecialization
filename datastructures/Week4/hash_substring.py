@@ -6,6 +6,15 @@ def read_input():
 def print_occurrences(output):
     print(' '.join(map(str, output)))
 
+def find_hash(text):
+	prime = 1000000007
+	x = 263
+	ans = 0
+	for c in reversed(text):
+		ans = ans * x + ord(c)
+		
+	return ans%prime
+
 def get_occurrences(pattern, text):
     return [
         i 

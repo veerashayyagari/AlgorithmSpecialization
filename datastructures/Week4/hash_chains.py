@@ -17,16 +17,21 @@ class QueryProcessor:
     def __init__(self, bucket_count):
         self.bucket_count = bucket_count
         # store all strings in one list
-        self.elems = []
+        self.elems = [[] for _ in range(self.bucket_count)]
 
+    # interesting way of implementing
+    # starts with s[|s| - 1]
+    # then gets multiplied by x in each iteration
+    # second iteration it becomes s[|s| - 1]*x + s[|s| - 2]
+    # third iteration it becomes s[|s| - 1]*x^2 + s[|s| - 2]*x + s[|s| - 3]
     def _hash_func(self, s):
         ans = 0
         for c in reversed(s):
             ans = (ans * self._multiplier + ord(c)) % self._prime
         return ans % self.bucket_count
 
-    def write_search_result(self, was_found):
-        print('yes' if was_found else 'no')
+    def write_search_result(self, chain):
+        print('yes' if len(chain) > 0 else 'no')
 
     def write_chain(self, chain):
         print(' '.join(chain))
@@ -36,22 +41,23 @@ class QueryProcessor:
 
     def process_query(self, query):
         if query.type == "check":
-            # use reverse order, because we append strings to the end
-            self.write_chain(cur for cur in reversed(self.elems)
-                        if self._hash_func(cur) == query.ind)
-        else:
-            try:
-                ind = self.elems.index(query.s)
-            except ValueError:
-                ind = -1
-            if query.type == 'find':
-                self.write_search_result(ind != -1)
+            self.write_chain(reversed(self.elems[query.ind]))
+        else:            
+            if query.type == 'find':                
+                chainIdx = self._hash_func(query.s)
+                chain = list(filter(lambda x : x == query.s,self.elems[chainIdx]))
+                self.write_search_result(chain)
             elif query.type == 'add':
-                if ind == -1:
-                    self.elems.append(query.s)
+                chainIdx = self._hash_func(query.s)
+                chain = list(filter(lambda x : x == query.s,self.elems[chainIdx]))
+                if len(chain) == 0:
+                    self.elems[chainIdx].append(query.s)                
             else:
-                if ind != -1:
-                    self.elems.pop(ind)
+                chainIdx = self._hash_func(query.s)
+                try:
+                    self.elems[chainIdx].remove(query.s)
+                except ValueError:
+                    pass
 
     def process_queries(self):
         n = int(input())
