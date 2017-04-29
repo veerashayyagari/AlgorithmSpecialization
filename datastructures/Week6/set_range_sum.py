@@ -9,6 +9,16 @@ class Vertex:
   def __init__(self, key, sum, left, right, parent):
     (self.key, self.sum, self.left, self.right, self.parent) = (key, sum, left, right, parent)
 
+
+def inOrderTraversal(node):
+  if node is None:
+    return
+
+  inOrderTraversal(node.left)
+  print("Node: Sum -> {0} and Key -> {1}".format(node.sum,node.key))
+  inOrderTraversal(node.right)
+
+
 def update(v):
   if v == None:
     return
@@ -123,22 +133,44 @@ def merge(left, right):
 root = None
 
 def insert(x):
-  global root
+  global root  
   (left, right) = split(root, x)
   new_vertex = None
   if right == None or right.key != x:
     new_vertex = Vertex(x, x, None, None, None)  
-  root = merge(merge(left, new_vertex), right)
+  root = merge(merge(left,new_vertex), right)
+  #print("After Inserting {0}".format(x))
+  #inOrderTraversal(root)
   
 def erase(x): 
   global root
-  # Implement erase yourself
-  pass
+  (left,right) = split(root,x)
+
+  #print("After Split on {0}".format(x))
+  #print("Left ->")
+  #inOrderTraversal(left)
+
+  #print("Right ->")
+  #inOrderTraversal(right)
+
+  if right is not None and right.key == x:
+    right = right.right
+    if right is not None:
+      right.parent = None
+
+  root = merge(left,right)
+
+  #print("After Erasing {0}".format(x))
+  #inOrderTraversal(root)
+
+
+
 
 def search(x): 
   global root
-  # Implement find yourself
-  
+  item,root = find(root,x)
+  if item is not None and item.key == x:
+    return True
   return False
   
 def sum(fr, to): 
@@ -146,8 +178,21 @@ def sum(fr, to):
   (left, middle) = split(root, fr)
   (middle, right) = split(middle, to + 1)
   ans = 0
-  # Complete the implementation of sum
+  if middle is not None:
+    ans = middle.sum
 
+  #print("Left ->")
+  #inOrderTraversal(left)
+
+  #print("Middle ->")
+  #inOrderTraversal(middle)
+
+  #print("Right ->")
+  #inOrderTraversal(right)
+
+  root = merge(merge(left,middle),right)
+  #print('After Summing {0} - {1}'.format(fr,to))
+  #inOrderTraversal(root)
   return ans
 
 MODULO = 1000000001
