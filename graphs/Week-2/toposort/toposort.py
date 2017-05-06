@@ -2,15 +2,29 @@
 
 import sys
 
+
+
+
 def dfs(adj, used, order, x):
-    #write your code here
-    pass
+    used[x] = True
+
+    for node in adj[x]:
+        if len(adj[node]) == 0 and used[node] is False:
+            used[node] = True
+            order.insert(0,node)
+        elif used[node] is False:
+            dfs(adj,used,order,node)
+    order.insert(0,x)
 
 
 def toposort(adj):
-    used = [0] * len(adj)
+    used = [False for _ in range(len(adj))]
     order = []
-    #write your code here
+    
+    for i in range(len(adj)):
+        if used[i] is False:
+            dfs(adj,used,order,i)
+
     return order
 
 if __name__ == '__main__':
