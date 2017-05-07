@@ -4,8 +4,25 @@ import sys
 import queue
 
 def bipartite(adj):
-    #write your code here
-    return -1
+    graph_length = len(adj)
+    q = queue.Queue()
+    color = [-1 for _ in range(graph_length)]
+
+    q.put(0)
+    color[0] = 1
+
+    while q.empty() is False:
+        node_to_process = q.get()
+        for node in adj[node_to_process]:
+            if color[node] != -1 and color[node] == color[node_to_process]:
+                return 0
+
+            if color[node] == -1:
+                color[node] = 1 - color[node_to_process]
+                q.put(node)
+
+    return 1
+
 
 if __name__ == '__main__':
     input = sys.stdin.read()
