@@ -4,8 +4,24 @@ import sys
 import queue
 
 def distance(adj, s, t):
-    #write your code here
-    return -1
+    graph_length = len(adj)
+    distance = [-1 for _ in range(graph_length)]
+    q = queue.Queue()
+    q.put(s)
+    distance[s] = 0
+
+    while q.empty() is False:
+        node_to_process = q.get()
+
+        if(node_to_process == t):
+            return distance[node_to_process]
+
+        for node in adj[node_to_process]:
+            if distance[node] == -1:
+                q.put(node)
+                distance[node] = distance[node_to_process] + 1
+
+    return distance[t]
 
 if __name__ == '__main__':
     input = sys.stdin.read()
